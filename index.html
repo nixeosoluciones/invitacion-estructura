@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>¡Victoria cumple 3 años! | 24 de octubre</title>
+  <meta name="description" content="Acompáñanos a celebrar los 3 años de Victoria Palacios Nava. 24 de octubre. ¡Te esperamos!" />
+  <!-- Fuentes infantiles y elegantes -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <link rel="icon" type="image/png" href="assets/logo.png" />
+</head>
+<body>
+
+  <!-- Canvas de confeti (se activa al abrir la fiesta) -->
+  <canvas id="confetiCanvas" aria-hidden="true"></canvas>
+
+  <!-- Globos flotantes generados por JS (referencia Birthday-V2) -->
+  <div id="globos" aria-hidden="true"></div>
+
+  <!-- Controles de música: Pista 1 / Pista 2 (mix aleatorio desde YouTube,
+       solo audio, sin video visible) + botón para pausar/reanudar. -->
+  <div class="musica-panel" role="group" aria-label="Control de música">
+    <button id="btnPista1" class="btn-musica" aria-label="Reproducir pista 1">1️⃣ Pista 1</button>
+    <button id="btnPista2" class="btn-musica" aria-label="Reproducir pista 2">2️⃣ Pista 2</button>
+    <button id="btnPausarMusica" class="btn-musica" aria-label="Pausar o reanudar música">⏸️ Pausar</button>
+  </div>
+  <!-- Música de fondo: audio directo desde YouTube.
+       https://www.youtube.com/watch?v=hSZbeDDWi1Y (inicia en el segundo 0:03)
+       El audio se transmite desde los servidores de YouTube (no gasta
+       ancho de banda de Netlify). El video queda oculto: solo se escucha
+       el audio y se controla con el botón de arriba. Ver README. -->
+  <div id="ytPlayerWrap" aria-hidden="true"><div id="ytPlayer"></div></div>
+
+  <!-- ============ PASO 1: SOBRE SELLADO (idea de Birthday-V2) ============ -->
+  <section class="step active" id="step1" aria-label="Invitación cerrada">
+    <div class="sobre-escena">
+      <p class="sobre-sub">Tienes una invitación especial</p>
+      <div class="envelope-container" id="envelopeContainer" role="button" tabindex="0" aria-label="Toca para abrir la invitación">
+        <div class="envelope">
+          <div class="envelope-back"></div>
+          <div class="carta-mini">💌</div>
+          <div class="envelope-front"></div>
+          <div class="envelope-flap"></div>
+          <div class="envelope-seal">V</div>
+        </div>
+      </div>
+      <h1 class="sobre-titulo">Para ti, con cariño</h1>
+      <p class="sobre-pulso">👆 Toca el sobre para abrir</p>
+      <img src="assets/bely.webp" alt="" class="sobre-deco deco-bely" aria-hidden="true" />
+      <img src="assets/beto.webp" alt="" class="sobre-deco deco-beto" aria-hidden="true" />
+    </div>
+  </section>
+
+  <!-- ============ PASO 2: CARTA (idea de Birthday-V2) ============ -->
+  <section class="step" id="step2" aria-label="Carta de invitación">
+    <div class="letter-container" id="letterContainer">
+      <div class="letter">
+        <img src="assets/te-invito.png" alt="Te invito a mi fiesta con los personajes" class="letter-img" />
+        <p class="letter-text">Un mensaje muy especial te está esperando...</p>
+        <button id="unfold-button" class="btn btn-principal">🎉 Abrir mi fiesta</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ PASO 3: FIESTA COMPLETA ============ -->
+  <div class="step" id="step3">
+    <main id="fiesta">
+
+      <!-- PORTADA -->
+      <header class="portada reveal" id="portada">
+        <img src="assets/fondo.webp" alt="" class="portada-fondo" aria-hidden="true" />
+        <div class="portada-velo" aria-hidden="true"></div>
+
+        <p class="etiqueta">✨ Acompáñame a celebrar ✨</p>
+
+        <!-- Imagen con edad + nombre (tal como la diseñaste) -->
+        <img src="assets/nombre-edad.png" alt="Victoria Palacios Nava, 3 años" class="img-nombre-edad" />
+
+        <p class="fecha-grande">🎈 24 de octubre 🎈</p>
+
+        <img src="assets/portada.png" alt="Bely y Beto celebrando la fiesta" class="img-portada" loading="lazy" />
+
+        <div class="portada-botones">
+          <a href="#contador" class="btn btn-principal">Ver mi fiesta 👇</a>
+          <a href="#confirmar" class="btn btn-secundario">Confirmar asistencia 💌</a>
+        </div>
+
+        <div class="flotantes" aria-hidden="true">
+          <span>🎈</span><span>⭐</span><span>💖</span><span>🎈</span><span>⭐</span><span>🎀</span>
+        </div>
+      </header>
+
+      <!-- AVISO CALCETINES -->
+      <div class="aviso-calcetines reveal" role="alert" aria-label="Aviso importante">
+        <div class="calcetines-banner">
+          <p><span class="calcetines-emoji" aria-hidden="true">🧦</span> ¡NO OLVIDES TUS CALCETINES! <span class="calcetines-emoji" aria-hidden="true">🧦</span></p>
+        </div>
+      </div>
+
+      <!-- CONTADOR -->
+      <section class="seccion reveal" id="contador" aria-label="Cuenta regresiva">
+        <h2 class="titulo-seccion">Faltan...</h2>
+        <p class="subtitulo">para la gran fiesta de Victoria</p>
+        <div class="contador" id="contadorBox">
+          <div class="contador-item"><span id="cd-dias">00</span><small>Días</small></div>
+          <div class="contador-item"><span id="cd-horas">00</span><small>Horas</small></div>
+          <div class="contador-item"><span id="cd-min">00</span><small>Minutos</small></div>
+          <div class="contador-item"><span id="cd-seg">00</span><small>Segundos</small></div>
+        </div>
+        <p id="mensajeContador" class="mensaje-contador" role="status"></p>
+        <img src="assets/personajes.png" alt="Personajes de la fiesta" class="img-personajes" loading="lazy" />
+      </section>
+
+      <!-- FECHA Y HORARIO -->
+      <section class="seccion seccion-rosa reveal" id="fecha" aria-label="Fecha y horario">
+        <h2 class="titulo-seccion">📅 Fecha y horario</h2>
+        <div class="tarjeta">
+          <p class="fecha-linea">🎂 <strong>Fecha:</strong> 24 de octubre</p>
+          <p class="fecha-linea">⏰ <strong>Hora:</strong> <span id="horaEventoTexto">3:00 pm</span></p>
+          <p class="fecha-linea">🎪 <strong>Show:</strong> 4:00 pm</p>
+          <p class="nota">Es el día del cumpleaños de Victoria. ¡No faltes!</p>
+          <div class="calendario-botones">
+            <p class="cal-titulo">Agregar al calendario:</p>
+            <div class="cal-fila">
+              <button class="btn btn-cal" id="btnGoogleCal">Google Calendar</button>
+              <button class="btn btn-cal" id="btnAppleCal">Apple Calendar</button>
+              <button class="btn btn-cal" id="btnOutlookCal">Outlook</button>
+            </div>
+          </div>
+        </div>
+        <img src="assets/central.jpg" alt="Decoración central de la fiesta" class="img-central" loading="lazy" />
+      </section>
+
+      <!-- UBICACIÓN -->
+      <section class="seccion reveal" id="ubicacion" aria-label="Ubicación de la fiesta">
+        <h2 class="titulo-seccion">📍 Ubicación de la fiesta</h2>
+        <p class="subtitulo">Aquí será la celebración</p>
+        <div class="tarjeta tarjeta-ubicacion">
+          <!-- Foto real del lugar. NO reemplazar. -->
+          <img src="assets/foto_ubicacion.png" alt="Foto del lugar donde será la fiesta" class="img-ubicacion" />
+          <p class="direccion"><strong>Dirección:</strong><br />Av. Abraham Lincoln 8112, col. Plutarco Elías Calles, Monterrey NL.</p>
+          <a class="btn btn-principal btn-maps" href="https://maps.app.goo.gl/FtVZk4571nZMHTR9A?g_st=aw" target="_blank" rel="noopener">Ver ubicación en Google Maps 🗺️</a>
+        </div>
+      </section>
+
+      <!-- CONFIRMAR ASISTENCIA -->
+      <section class="seccion reveal" id="confirmar" aria-label="Confirma tu asistencia">
+        <h2 class="titulo-seccion">💌 ¡Confirma tu asistencia!</h2>
+        <p class="subtitulo">Registra a tu familia para celebrar los 3 años de Victoria</p>
+
+        <form id="formAsistencia" class="tarjeta form-tarjeta" novalidate>
+          <fieldset>
+            <legend>👨‍👩‍👧 Invitados</legend>
+            <div id="listaInvitados">
+              <!-- UNA sola fila vacía por defecto; se genera desde script.js. -->
+            </div>
+            <button type="button" class="btn btn-agregar" id="btnAgregarInvitado">+ Agregar invitado</button>
+          </fieldset>
+
+          <fieldset>
+            <legend>🧒 ¿Cuántos niños asistirán?</legend>
+            <div class="ninos-botones" role="group" aria-label="Cantidad de niños">
+              <button type="button" class="btn-nino" data-ninos="1">1</button>
+              <button type="button" class="btn-nino" data-ninos="2">2</button>
+              <button type="button" class="btn-nino" data-ninos="3">3</button>
+              <button type="button" class="btn-nino" data-ninos="4">4</button>
+              <button type="button" class="btn-nino" data-ninos="+">+</button>
+            </div>
+            <input type="number" id="inputNinosExtra" class="input" min="5" max="30" step="1" placeholder="Escribe la cantidad (5 o más)" hidden />
+            <button type="button" class="btn btn-sin-ninos" id="btnSinNinos">No llevaremos niños</button>
+            <p class="ninos-seleccion">Selección: <strong id="ninosSeleccionTexto">sin elegir</strong></p>
+          </fieldset>
+
+          <p id="formError" class="form-error" role="alert" hidden></p>
+
+          <button type="submit" class="btn btn-principal btn-aceptar" id="btnAceptar">✅ Aceptar asistencia</button>
+          <p id="estadoFirebase" class="nota" role="status">Conectando con Firebase…</p>
+          <p id="formOk" class="form-ok" role="status" hidden>¡Gracias por confirmar! Te esperamos para celebrar los 3 años de Victoria. 🎉</p>
+        </form>
+      </section>
+
+      <footer class="footer">
+        <img src="assets/logo.png" alt="" class="footer-logo" aria-hidden="true" loading="lazy" />
+        <p>Con amor, te espera</p>
+        <p class="footer-nombre">Victoria Palacios Nava · 3 años · 24 de octubre</p>
+        <p class="marca-agua">Creado por <a href="https://www.nixeosoluciones.com" target="_blank" rel="noopener">www.nixeosoluciones.com</a> · <a href="mailto:contacto@nixeosoluciones.com">contacto@nixeosoluciones.com</a> · <a href="tel:+528998312260">+52 899 831 2260</a></p>
+      </footer>
+
+    </main>
+  </div>
+
+  <!-- Firebase SDK (compat, funciona con JS puro y Netlify estático) -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
+  <script src="firebase.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>

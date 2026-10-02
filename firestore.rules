@@ -1,0 +1,27 @@
+rules_version = '2';
+
+// Reglas de Firestore — Invitación Victoria Palacios Nava · 3 años
+//
+// CÓMO USARLAS (elige una opción):
+// A) Consola web (recomendado): ve a https://console.firebase.google.com
+//    → tu proyecto → Firestore Database → pestaña Reglas → pega TODO el
+//    contenido de este archivo → Publicar. Espera ~1 minuto.
+// B) Firebase CLI: firebase deploy --only firestore:rules
+//    (requiere firebase.json con "firestore": { "rules": "firestore.rules" })
+//
+// - confirmaciones: solo se crean desde el formulario (no se leen ni editan).
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Confirmaciones de asistencia: { invitados[], cantidadNinos, asistencia, fechaRegistro }
+    match /confirmaciones/{id} {
+      allow read: if false;
+      allow create: if request.resource.data.invitados is list
+        && request.resource.data.invitados.size() > 0
+        && request.resource.data.cantidadNinos is number
+        && request.resource.data.asistencia == true;
+      allow update, delete: if false;
+    }
+  }
+}
