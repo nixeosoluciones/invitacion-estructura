@@ -96,53 +96,26 @@ function createBalloons(count) {
   }
 }
 
-/* ================= 3. MÚSICA DESDE YOUTUBE (solo audio) =================
-   Video: https://www.youtube.com/watch?v=hSZbeDDWi1Y
-   El audio se transmite desde YouTube (no gasta ancho de banda de Netlify).
-   El video queda oculto: solo se escucha el audio, controlado con el botón.
-   Para cambiar la canción, edita YT_VIDEO_ID con el ID del video (lo que va
-   después de "v=" en la URL de YouTube) y INICIO_SEGUNDOS con el segundo
-   donde debe empezar.
-   Los navegadores bloquean el autoplay con sonido, por eso la música inicia
-   DESPUÉS de que el usuario abre la fiesta (gesto válido) o con el botón. */
-/* ================= 3. MIX DE MÚSICA DESDE YOUTUBE (solo audio) ================
+/* ================= 3. MÚSICA DESDE YOUTUBE (solo audio, una pista) ================
+   Video: https://www.youtube.com/watch?v=hSZbeDDWi1Y (inicia 0:03)
    El audio se transmite desde YouTube (no gasta ancho de banda de Netlify).
    El video queda oculto: solo se escucha el audio.
-   - Pista 1: https://www.youtube.com/watch?v=hSZbeDDWi1Y (inicia 0:03)
-   - Pista 2: https://www.youtube.com/watch?v=XawkQr8NOEg (inicia 0:35)
-   Para cambiar canciones edita PLAYLIST (ID = lo que va después de "v=",
-   inicio = segundo donde empieza cada una).
-   Al abrir la fiesta suena una pista al azar. Los botones Pista 1 / Pista 2
-   cambian de canción y el botón Pausar detiene o reanuda la reproducción.
+   Para cambiar la canción edita PISTA (ID = lo que va después de "v=",
+   inicio = segundo donde empieza).
+   Al abrir la fiesta suena la pista 1 por defecto. Un solo botón Pausar/Seguir
+   detiene o reanuda la reproducción. Sin controles de sonido visibles.
    Los navegadores bloquean el autoplay con sonido, por eso la música inicia
    DESPUÉS de que el usuario abre la fiesta (gesto válido). */
-const PLAYLIST = [
-  { id: "hSZbeDDWi1Y", inicio: 3, etiqueta: "Pista 1" },   // ← EDITA
-  { id: "XawkQr8NOEg", inicio: 35, etiqueta: "Pista 2" }   // ← EDITA
-];
-const btnPista1 = document.getElementById("btnPista1");
-const btnPista2 = document.getElementById("btnPista2");
+const PISTA = { id: "hSZbeDDWi1Y", inicio: 3 };   // ← EDITA LA CANCIÓN AQUÍ
 const btnPausarMusica = document.getElementById("btnPausarMusica");
-const botonesPista = [btnPista1, btnPista2];
 let musicaSonando = false;
-let pistaActual = -1; // -1 = ninguna pista iniciada aún
+let pistaIniciada = false; // false = aún no suena nada
 let ytListo = false;
 let ytPlayer = null;
-let pendientePista = null; // pista pedida antes de que cargue la API
+let pendienteInicio = false; // se pidió sonar antes de que cargue la API
 
-function pintarBotonesMusica() {
-  botonesPista.forEach((b, i) => {
-    if (b) b.classList.toggle("sonando", musicaSonando && pistaActual === i);
-  });
+function pintarBotonMusica() {
   if (btnPausarMusica) btnPausarMusica.textContent = musicaSonando ? "⏸️ Pausar" : "▶️ Seguir";
-}
-
-// Elige una pista al azar diferente a la que suena (si hay más de una).
-function pistaAleatoria() {
-  if (PLAYLIST.length < 2) return 0;
-  let i;
-  do { i = Math.floor(Math.random() * PLAYLIST.length); } while (i === pistaActual);
-  return i;
 }
 
 // Carga la API de YouTube (https://developers.google.com/youtube/iframe_api_reference)
@@ -159,57 +132,54 @@ window.onYouTubeIframeAPIReady = function () {
   ytPlayer = new YT.Player("ytPlayer", {
     width: "1",
     height: "1",
-    videoId: PLAYLIST[0].id,
+    videoId: PISTA.id,
     playerVars: { autoplay: 0, controls: 0, disablekb: 1, rel: 0 },
     events: {
       onReady: () => {
         ytListo = true;
-        if (pendientePista !== null) { const p = pendientePista; pendientePista = null; sonarPista(p); }
+        if (pendienteInicio) { pendienteInicio = false; sonarPista(); }
       },
       onStateChange: (e) => {
         if (e.data === YT.PlayerState.ENDED) {
-          sonarPista(pistaAleatoria()); // al terminar, sigue otra pista al azar
+          sonarPista(); // al terminar, repite la misma pista desde el inicio
           return;
         }
         musicaSonando = (e.data === YT.PlayerState.PLAYING);
-        pintarBotonesMusica();
+        pintarBotonMusica();
       },
       onError: () => {
         ytListo = false;
         musicaSonando = false;
-        pintarBotonesMusica();
+        pintarBotonMusica();
       }
     }
   });
 };
 
-// Reproduce la pista i desde su segundo de inicio.
-function sonarPista(i) {
-  pistaActual = i;
+// Reproduce la pista 1 desde su segundo de inicio (siempre la misma).
+function sonarPista() {
+  pistaIniciada = true;
   if (ytListo && ytPlayer && ytPlayer.loadVideoById) {
-    ytPlayer.loadVideoById({ videoId: PLAYLIST[i].id, startSeconds: PLAYLIST[i].inicio });
+    ytPlayer.loadVideoById({ videoId: PISTA.id, startSeconds: PISTA.inicio });
   } else {
-    pendientePista = i; // la API aún carga: suena en cuanto esté lista
+    pendienteInicio = true; // la API aún carga: suena en cuanto esté lista
   }
 }
 
 function intentarReproducirMusica() {
-  if (musicaSonando || pistaActual !== -1) return;
-  sonarPista(pistaAleatoria()); // se llama desde "Abrir mi fiesta": gesto válido
+  if (musicaSonando || pistaIniciada) return;
+  sonarPista(); // se llama desde "Abrir mi fiesta": gesto válido, siempre pista 1
 }
 
-botonesPista.forEach((b, i) => {
-  if (b) b.addEventListener("click", () => sonarPista(i));
-});
 if (btnPausarMusica) {
-  pintarBotonesMusica();
+  pintarBotonMusica();
   btnPausarMusica.addEventListener("click", () => {
     if (musicaSonando) {
       if (ytPlayer && ytPlayer.pauseVideo) ytPlayer.pauseVideo();
-    } else if (pistaActual >= 0 && ytListo && ytPlayer && ytPlayer.playVideo) {
+    } else if (pistaIniciada && ytListo && ytPlayer && ytPlayer.playVideo) {
       ytPlayer.playVideo(); // reanuda donde se pausó
     } else {
-      sonarPista(pistaAleatoria()); // aún no sonaba nada: inicia al azar
+      sonarPista(); // aún no sonaba nada: inicia pista 1
     }
   });
 }

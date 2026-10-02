@@ -28,17 +28,16 @@ invitacion-victoria/
     └── (sin archivos de música: el audio viene de YouTube)
 ```
 
-## 🎵 Mix de música desde YouTube (solo audio, sin video visible)
+## 🎵 Música desde YouTube (solo audio, sin video visible)
 
-- Pista 1: https://www.youtube.com/watch?v=hSZbeDDWi1Y (inicia en 0:03)
-- Pista 2: https://www.youtube.com/watch?v=XawkQr8NOEg (inicia en 0:35)
+- Pista única: https://www.youtube.com/watch?v=hSZbeDDWi1Y (inicia en 0:03)
 
 El audio se transmite directo desde YouTube: **no gasta ancho de banda de Netlify**
-y no hay que subir ningún MP3. Al abrir la fiesta suena una pista al azar; con
-los botones flotantes **Pista 1 / Pista 2** el invitado elige canción y con
-**Pausar/Seguir** detiene o reanuda. Al terminar una canción sigue otra al azar.
+y no hay que subir ningún MP3. Al abrir la fiesta suena la pista 1 por defecto;
+con el botón flotante **Pausar/Seguir** se detiene o reanuda. Al terminar se repite.
+Sin controles de sonido visibles, solo un botón.
 
-- Para cambiar canciones edita `PLAYLIST` en `script.js` (ID + segundo de inicio).
+- Para cambiar la canción edita `PISTA` en `script.js` (ID + segundo de inicio).
 - Nota: si el dueño de un video desactiva la inserción o hay anuncios, YouTube
   puede mostrar un anuncio antes del audio; es el costo de no alojar el MP3.
 
@@ -87,7 +86,7 @@ los botones flotantes **Pista 1 / Pista 2** el invitado elige canción y con
 | Fecha | `evento.fechaISO` |
 | Lugar / Maps | `evento.mapsURL` |
 | Dirección del salón | `evento.direccion` |
-| Canciones del mix (ID + segundo de inicio) | `PLAYLIST` |
+| Canción única (ID + segundo de inicio) | `PISTA` |
 | Invitados iniciales | `listaInicialInvitados` |
 | Máx. niños (+) | `MAX_NINOS` |
 | Título/descripción calendario | `evento.titulo`, `evento.descripcion` |

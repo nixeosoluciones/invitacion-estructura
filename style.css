@@ -98,7 +98,7 @@ section.seccion{padding:2.2rem 1.1rem; max-width:640px; margin:0 auto; text-alig
   background:#fff; border:2px solid var(--rosa); color:var(--rosa-osc); border-radius:999px; padding:.45rem .75rem;
   font-family:'Baloo 2',cursive; font-weight:700; font-size:.85rem; box-shadow:var(--sombra); cursor:pointer}
 .btn-musica.sonando{background:linear-gradient(135deg,var(--rosa),var(--morado)); color:#fff; border-color:transparent}
-/* Panel flotante con Pista 1 / Pista 2 / Pausar */
+/* Panel flotante con un solo botón Pausar/Seguir */
 .musica-panel{position:fixed; top:12px; right:12px; z-index:70; display:flex; gap:.35rem; flex-wrap:wrap; justify-content:flex-end; max-width:70vw}
 /* Reproductor de YouTube oculto: solo se escucha el audio, el video no se ve.
    Se mantiene renderizado (1px) en lugar de display:none para que la API
