@@ -1,3 +1,18 @@
 # Sitio estático — Netlify sirve index.html directamente.
+# Sin build: HTML + CSS + JS puro, Firebase y YouTube por CDN.
 [build]
   publish = "."
+
+# Seguridad básica
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+
+# Caché largo para imágenes (los HTML/JS/CSS se actualizan en cada deploy)
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
