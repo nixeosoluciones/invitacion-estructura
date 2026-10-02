@@ -6,7 +6,7 @@
    3. Música, globos, confeti y animaciones
    4. Contador regresivo
    5. Calendario (Google / Apple / Outlook)
-   6. Modal de regalo electrónico
+   6. Mesa de regalos (mensaje para entregar en el evento)
    7. Formulario + guardado en Firebase
    ============================================================ */
 
@@ -37,7 +37,7 @@ const fechaEvento = new Date(`${evento.fechaISO}T${HORA_EVENTO}:00`);
 // (dato de referencia del evento), pero NO se precargan dentro de los inputs:
 // el campo de texto inicia vacío y el usuario escribe cada nombre.
 const listaInicialInvitados = ["José Garza", "Irene"]; // ← dato inicial (no precargar en inputs)
-const MAX_NINOS = 30; // número máximo permitido en el input "+"
+const MAX_INVITADOS = 10; // número máximo de filas de invitados adultos
 
 /* ============ 2. FLUJO SOBRE → CARTA → FIESTA ============ */
 const step1 = document.getElementById("step1");
@@ -379,20 +379,13 @@ if (btnA) btnA.addEventListener("click", () => {
   setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1000);
 });
 
-/* ================= 7. FORMULARIO DE ASISTENCIA ================= */
+/* ================= 7. FORMULARIO DE ASISTENCIA (solo adultos) ================= */
 const listaInvitados = document.getElementById("listaInvitados");
 const btnAgregarInvitado = document.getElementById("btnAgregarInvitado");
-const inputNinosExtra = document.getElementById("inputNinosExtra");
-const btnSinNinos = document.getElementById("btnSinNinos");
-const ninosTexto = document.getElementById("ninosSeleccionTexto");
 const form = document.getElementById("formAsistencia");
 const formError = document.getElementById("formError");
 const formOk = document.getElementById("formOk");
 const btnAceptar = document.getElementById("btnAceptar");
-
-// Estado: null = sin elegir, 0 = sin niños, n = cantidad
-let cantidadNinos = null;
-let sinNinosElegido = false;
 
 // Crea una fila de invitado (input + botón quitar)
 function crearFilaInvitado(nombre = "") {
@@ -401,7 +394,7 @@ function crearFilaInvitado(nombre = "") {
   const input = document.createElement("input");
   input.type = "text";
   input.className = "input input-invitado";
-  input.placeholder = "Nombre del invitado";
+  input.placeholder = "Nombre del adulto";
   input.value = nombre;
   input.maxLength = 60;
   input.setAttribute("aria-label", "Nombre del invitado");
@@ -429,65 +422,16 @@ if (listaInvitados) {
 }
 if (btnAgregarInvitado) {
   btnAgregarInvitado.addEventListener("click", () => {
+    const total = listaInvitados.querySelectorAll(".invitado-fila").length;
+    if (total >= MAX_INVITADOS) {
+      mostrarError(`Puedes registrar hasta ${MAX_INVITADOS} invitados adultos. 💌`);
+      return;
+    }
     listaInvitados.appendChild(crearFilaInvitado(""));
     const ultimo = listaInvitados.querySelector(".invitado-fila:last-child input");
     if (ultimo) ultimo.focus();
   });
 }
-
-// Botones 1 | 2 | 3 | 4 | +  (+ botón definitivo "No llevaremos niños")
-const botonesNino = Array.from(document.querySelectorAll(".btn-nino"));
-function pintarSeleccionNinos() {
-  botonesNino.forEach((b) => {
-    const v = b.dataset.ninos;
-    const activo = sinNinosElegido
-      ? false
-      : (v === "+" ? (cantidadNinos !== null && cantidadNinos > 4) : (Number(v) === cantidadNinos));
-    b.classList.toggle("activo", !!activo);
-  });
-  if (btnSinNinos) btnSinNinos.classList.toggle("activo", sinNinosElegido);
-  if (ninosTexto) {
-    ninosTexto.textContent = sinNinosElegido
-      ? "No llevaremos niños"
-      : (cantidadNinos === null ? "sin elegir" : `${cantidadNinos} niño(s)`);
-  }
-  if (inputNinosExtra) {
-    const mostrar = !sinNinosElegido && cantidadNinos !== null && cantidadNinos > 4;
-    inputNinosExtra.hidden = !mostrar;
-    if (mostrar && document.activeElement !== inputNinosExtra) inputNinosExtra.focus();
-  }
-}
-botonesNino.forEach((b) => {
-  b.addEventListener("click", () => {
-    sinNinosElegido = false;
-    if (formError) formError.hidden = true;
-    if (b.dataset.ninos === "+") {
-      cantidadNinos = 5; // valor inicial del "+"; el usuario lo ajusta en el input
-      if (inputNinosExtra) inputNinosExtra.value = "5";
-    } else {
-      cantidadNinos = Number(b.dataset.ninos);
-    }
-    pintarSeleccionNinos();
-  });
-});
-if (inputNinosExtra) {
-  inputNinosExtra.addEventListener("input", () => {
-    let n = parseInt(inputNinosExtra.value, 10);
-    if (isNaN(n)) return;
-    n = Math.max(5, Math.min(MAX_NINOS, n));
-    cantidadNinos = n;
-    pintarSeleccionNinos();
-  });
-}
-if (btnSinNinos) {
-  btnSinNinos.addEventListener("click", () => {
-    sinNinosElegido = true;
-    cantidadNinos = 0;
-    if (formError) formError.hidden = true;
-    pintarSeleccionNinos();
-  });
-}
-pintarSeleccionNinos();
 
 function mostrarError(msg) {
   if (!formError) return;
@@ -497,7 +441,7 @@ function mostrarError(msg) {
 }
 
 // Guardar en Firestore (colección "confirmaciones").
-// Estructura: { invitados: [...], cantidadNinos, asistencia, fechaRegistro }
+// Estructura: { invitados: [...adultos], asistencia, fechaRegistro }
 async function guardarConfirmacion(datos) {
   // db viene de firebase.js (null si no hay config/internet → modo local)
   if (typeof db !== "undefined" && db) {
@@ -524,7 +468,7 @@ if (form) {
     if (formError) formError.hidden = true;
     if (formOk) formOk.hidden = true;
 
-    // 1) Validar invitados (evitar registros incompletos)
+    // 1) Validar invitados adultos (evitar registros incompletos)
     const nombres = Array.from(listaInvitados.querySelectorAll(".input-invitado"))
       .map((i) => i.value.trim())
       .filter((n) => n.length > 0);
@@ -532,22 +476,16 @@ if (form) {
       mostrarError("Escribe al menos el nombre de un invitado. 💌");
       return;
     }
-    // 2) Validar cantidad de niños (obligatorio elegir, incluido "sin niños")
-    if (cantidadNinos === null) {
-      mostrarError("Elige cuántos niños asistirán (o pulsa «No llevaremos niños»). 🧒");
-      return;
-    }
-    if (cantidadNinos > 0 && (cantidadNinos < 0 || cantidadNinos > MAX_NINOS)) {
-      mostrarError(`La cantidad de niños debe estar entre 1 y ${MAX_NINOS}.`);
+    if (nombres.length > MAX_INVITADOS) {
+      mostrarError(`Puedes registrar hasta ${MAX_INVITADOS} invitados adultos. 💌`);
       return;
     }
 
-    // 3) Guardar
+    // 2) Guardar
     if (btnAceptar) { btnAceptar.disabled = true; btnAceptar.textContent = "Guardando... ⏳"; }
     try {
       const resultado = await guardarConfirmacion({
         invitados: nombres,
-        cantidadNinos: cantidadNinos,
         asistencia: true
       });
       if (formOk) {
@@ -583,7 +521,22 @@ if (form) {
   }
 })();
 
-/* ================= 8. REVEAL AL HACER SCROLL ================= */
+/* ================= 8. MESA DE REGALOS ================= */
+const btnSobre = document.getElementById("btnSobre");
+const btnRegalo = document.getElementById("btnRegalo");
+const mensajeRegalo = document.getElementById("mensajeRegalo");
+
+function mostrarMensajeRegalo() {
+  if (!mensajeRegalo) return;
+  mensajeRegalo.hidden = false;
+  mensajeRegalo.scrollIntoView({ behavior: "smooth", block: "center" });
+  // Pequeña celebración sin saturar
+  try { lanzarConfeti(80); } catch (e) { /* confeti opcional */ }
+}
+if (btnSobre) btnSobre.addEventListener("click", mostrarMensajeRegalo);
+if (btnRegalo) btnRegalo.addEventListener("click", mostrarMensajeRegalo);
+
+/* ================= 9. REVEAL AL HACER SCROLL ================= */
 let revealObserver = null;
 function activarReveal() {
   const els = document.querySelectorAll("#step3 .reveal");

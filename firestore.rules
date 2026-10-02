@@ -14,12 +14,14 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // Confirmaciones de asistencia: { invitados[], cantidadNinos, asistencia, fechaRegistro }
+    // Confirmaciones de asistencia: { invitados[] (adultos), asistencia, fechaRegistro }
+    // cantidadNinos es opcional (se eliminó del formulario; se acepta por compatibilidad).
     match /confirmaciones/{id} {
       allow read: if false;
       allow create: if request.resource.data.invitados is list
         && request.resource.data.invitados.size() > 0
-        && request.resource.data.cantidadNinos is number
+        && request.resource.data.invitados.size() <= 10
+        && (!("cantidadNinos" in request.resource.data) || request.resource.data.cantidadNinos is number)
         && request.resource.data.asistencia == true;
       allow update, delete: if false;
     }

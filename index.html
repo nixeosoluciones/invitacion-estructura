@@ -116,7 +116,7 @@
 
       <!-- FECHA Y HORARIO -->
       <section class="seccion seccion-rosa reveal" id="fecha" aria-label="Fecha y horario">
-        <h2 class="titulo-seccion">📅 Fecha y horario</h2>
+        <h2 class="titulo-seccion"><span class="titulo-emoji" aria-hidden="true">📅</span> Fecha y horario</h2>
         <div class="tarjeta">
           <p class="fecha-linea">🎂 <strong>Fecha:</strong> 24 de octubre</p>
           <p class="fecha-linea">⏰ <strong>Hora:</strong> <span id="horaEventoTexto">3:00 pm</span></p>
@@ -136,7 +136,7 @@
 
       <!-- UBICACIÓN -->
       <section class="seccion reveal" id="ubicacion" aria-label="Ubicación de la fiesta">
-        <h2 class="titulo-seccion">📍 Ubicación de la fiesta</h2>
+        <h2 class="titulo-seccion"><span class="titulo-emoji" aria-hidden="true">📍</span> Ubicación de la fiesta</h2>
         <p class="subtitulo">Aquí será la celebración</p>
         <div class="tarjeta tarjeta-ubicacion">
           <!-- Foto real del lugar. NO reemplazar. -->
@@ -146,32 +146,31 @@
         </div>
       </section>
 
+      <!-- MESA DE REGALOS -->
+      <section class="seccion reveal" id="regalos" aria-label="Mesa de regalos">
+        <h2 class="titulo-seccion"><span class="titulo-emoji" aria-hidden="true">🎁</span> Mesa de regalos</h2>
+        <p class="subtitulo">Tu presencia es lo más importante</p>
+        <div class="tarjeta">
+          <div class="regalos-botones">
+            <button type="button" class="btn btn-regalo" id="btnSobre" aria-label="Regalo en sobre">✉️ Sobre</button>
+            <button type="button" class="btn btn-regalo" id="btnRegalo" aria-label="Regalo físico">🎁 Regalo</button>
+          </div>
+          <p id="mensajeRegalo" class="form-ok" role="status" hidden>🎁 Por favor entrega tu regalo en la mesa del evento. ¡Gracias! 💖</p>
+        </div>
+      </section>
+
       <!-- CONFIRMAR ASISTENCIA -->
       <section class="seccion reveal" id="confirmar" aria-label="Confirma tu asistencia">
-        <h2 class="titulo-seccion">💌 ¡Confirma tu asistencia!</h2>
+        <h2 class="titulo-seccion"><span class="titulo-emoji" aria-hidden="true">💌</span> ¡Confirma tu asistencia!</h2>
         <p class="subtitulo">Registra a tu familia para celebrar los 3 años de Victoria</p>
 
         <form id="formAsistencia" class="tarjeta form-tarjeta" novalidate>
           <fieldset>
-            <legend>👨‍👩‍👧 Invitados</legend>
+            <legend>🧑‍🤝‍🧑 Invitados adultos</legend>
             <div id="listaInvitados">
               <!-- UNA sola fila vacía por defecto; se genera desde script.js. -->
             </div>
             <button type="button" class="btn btn-agregar" id="btnAgregarInvitado">+ Agregar invitado</button>
-          </fieldset>
-
-          <fieldset>
-            <legend>🧒 ¿Cuántos niños asistirán?</legend>
-            <div class="ninos-botones" role="group" aria-label="Cantidad de niños">
-              <button type="button" class="btn-nino" data-ninos="1">1</button>
-              <button type="button" class="btn-nino" data-ninos="2">2</button>
-              <button type="button" class="btn-nino" data-ninos="3">3</button>
-              <button type="button" class="btn-nino" data-ninos="4">4</button>
-              <button type="button" class="btn-nino" data-ninos="+">+</button>
-            </div>
-            <input type="number" id="inputNinosExtra" class="input" min="5" max="30" step="1" placeholder="Escribe la cantidad (5 o más)" hidden />
-            <button type="button" class="btn btn-sin-ninos" id="btnSinNinos">No llevaremos niños</button>
-            <p class="ninos-seleccion">Selección: <strong id="ninosSeleccionTexto">sin elegir</strong></p>
           </fieldset>
 
           <p id="formError" class="form-error" role="alert" hidden></p>

@@ -94,8 +94,6 @@ section.seccion{padding:2.2rem 1.1rem; max-width:640px; margin:0 auto; text-alig
 .btn-agregar{background:#f3e8ff; color:var(--morado-osc); font-size:.95rem; margin-top:.6rem}
 .btn-maps{margin-top:1rem}
 .btn-aceptar{width:100%; font-size:1.2rem; margin-top:1rem}
-.btn-sin-ninos{background:#fff; border:2px dashed var(--rosa); color:var(--rosa-osc); font-size:.95rem; margin-top:.7rem; width:100%}
-.btn-sin-ninos.activo{background:linear-gradient(135deg,var(--rosa),var(--morado)); color:#fff; border-style:solid; border-color:transparent}
 .btn-musica{display:inline-flex; align-items:center; gap:.35rem;
   background:#fff; border:2px solid var(--rosa); color:var(--rosa-osc); border-radius:999px; padding:.45rem .75rem;
   font-family:'Baloo 2',cursive; font-weight:700; font-size:.85rem; box-shadow:var(--sombra); cursor:pointer}
@@ -153,6 +151,10 @@ section.seccion{padding:2.2rem 1.1rem; max-width:640px; margin:0 auto; text-alig
   background:linear-gradient(90deg,#e91e8c,#5b21b6,#ff6a00,#e91e8c);
   -webkit-background-clip:text; background-clip:text; color:transparent;
   filter:drop-shadow(0 1px 0 #fff) drop-shadow(0 0 8px rgba(255,255,255,.9))}
+/* Los emojis dentro de títulos con gradient-text se veían morados/transparentes:
+   se aíslan para conservar sus colores originales. */
+.titulo-seccion .titulo-emoji{background:none; -webkit-background-clip:border-box; background-clip:border-box;
+  color:initial; -webkit-text-fill-color:initial; filter:none}
 .subtitulo{color:#7a1f4d; font-weight:700; margin:.2rem 0 1rem;
   text-shadow:-1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff, 1px 1px 0 #fff, 0 0 10px #fff}
 .seccion-rosa{background:linear-gradient(180deg,rgba(255,255,255,.92) 0%,rgba(255,233,243,.92) 100%); border-radius:32px}
@@ -173,6 +175,10 @@ section.seccion{padding:2.2rem 1.1rem; max-width:640px; margin:0 auto; text-alig
 .nota{color:var(--gris); font-size:.92rem}
 .cal-titulo{font-weight:700; margin-bottom:.5rem}
 .cal-fila{display:flex; gap:.5rem; justify-content:center; flex-wrap:wrap}
+/* ---------- Mesa de regalos ---------- */
+.regalos-botones{display:flex; gap:.7rem; justify-content:center; flex-wrap:wrap; margin:.4rem 0 1rem}
+.btn-regalo{background:linear-gradient(135deg,var(--rosa),var(--morado)); color:#fff; font-size:1.1rem; min-width:140px}
+#mensajeRegalo{margin:.8rem 0 0}
 .img-central{width:min(420px,92vw); margin:1.1rem auto 0; border-radius:20px; box-shadow:var(--sombra)}
 .tarjeta-ubicacion{padding:1rem}
 .img-ubicacion{border-radius:16px; width:100%; box-shadow:0 6px 18px rgba(0,0,0,.12)}
@@ -189,11 +195,6 @@ legend{font-family:'Baloo 2',cursive; font-weight:700; color:var(--morado-osc); 
 .invitado-fila .input{margin-top:0; flex:1}
 .btn-quitar{background:#fff0f4; border:2px solid #ffc9da; color:var(--rosa-osc); border-radius:12px;
   font-weight:800; cursor:pointer; padding:0 .8rem}
-.ninos-botones{display:flex; gap:.5rem; flex-wrap:wrap}
-.btn-nino{flex:1; min-width:52px; padding:.7rem 0; border-radius:14px; border:2px solid var(--morado);
-  background:#fff; font-family:'Baloo 2',cursive; font-weight:800; font-size:1.1rem; cursor:pointer; color:var(--morado-osc)}
-.btn-nino.activo{background:linear-gradient(135deg,var(--rosa),var(--morado)); color:#fff; border-color:transparent}
-.ninos-seleccion{margin:.6rem 0 0}
 .form-error{background:#fff0f0; color:#b4232b; border:2px solid #ffc9c9; padding:.7rem; border-radius:12px; font-weight:600}
 .form-ok{background:#eefbef; color:#1d7a2f; border:2px solid #bdeed0; padding:.8rem; border-radius:12px; font-weight:700; text-align:center}
 .footer{text-align:center; padding:2rem 1rem 3rem; color:#6b2b1d; font-weight:600;
